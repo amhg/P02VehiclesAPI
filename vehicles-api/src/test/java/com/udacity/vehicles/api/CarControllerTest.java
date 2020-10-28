@@ -82,6 +82,7 @@ public class CarControllerTest {
     @Test
     public void createCar() throws Exception {
         Car car = getCar();
+        car.setId(1L);
         mvc.perform(
                 post(new URI("/cars"))
                         .content(json.write(car).getJson())
@@ -97,24 +98,15 @@ public class CarControllerTest {
     @Test
     public void updateCar() throws Exception {
         Car car = getCar();
+        car.setCondition(Condition.USED);
 
         mvc.perform(
-            post(new URI("/cars"))
-                .content(json.write(car).getJson())
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
-            .andDo(print());
-
-        car.setCondition(Condition.NEW);
-
-        mvc.perform(
-            put(new URI("/cars"))
+            put("/cars/{id}", 1)
                 .content(json.write(car).getJson())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
-                .andExpect(jsonPath("$.condition").value(Condition.NEW));
-
+                .andExpect(status().isOk());
     }
 
     /**
@@ -179,7 +171,7 @@ public class CarControllerTest {
         details.setProductionYear(2018);
         details.setNumberOfDoors(4);
         car.setDetails(details);
-        car.setCondition(Condition.USED);
+        car.setCondition(Condition.NEW);
         return car;
     }
 }
